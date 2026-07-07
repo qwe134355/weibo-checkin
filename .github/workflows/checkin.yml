@@ -1,16 +1,27 @@
 name: 微博超话每日签到
+
 on:
   schedule:
-    - cron: '0 2 * * *'
+    # 北京时间每天 01:00 (UTC 17:00)
+    - cron: '0 17 * * *'
+    # 备用时段: 北京时间 20:00 (UTC 12:00) - 前一天晚间提前签
+    - cron: '0 12 * * *'
   workflow_dispatch:
+  repository_dispatch:
+    types: [trigger-checkin]
+
 jobs:
   checkin:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 使用 Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: 执行签到
         env:
           WEIBO_COOKIES: ${{ secrets.WEIBO_COOKIES }}
